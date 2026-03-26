@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="DentistAssistantAI.App/DentistAssistantAI.App.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="DentistAssistantAI.Core/DentistAssistantAI.Core.csproj" />
+  <Project Path="DentistAssistantAI.Domain/DentistAssistantAI.Domain.csproj" />
+  <Project Path="DentistAssistantAI.Infrastructure/DentistAssistantAI.Infrastructure.csproj" />
+</Solution>
