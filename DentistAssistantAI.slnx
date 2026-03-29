@@ -2,7 +2,7 @@
   <Project Path="DentistAssistantAI.App/DentistAssistantAI.App.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
+  <Project Path="DentistAssistantAI.Application/DentistAssistantAI.Application.csproj" Id="bf41fab3-d37e-4302-ad5b-1641103ba09f" />
   <Project Path="DentistAssistantAI.Core/DentistAssistantAI.Core.csproj" />
-  <Project Path="DentistAssistantAI.Domain/DentistAssistantAI.Domain.csproj" />
   <Project Path="DentistAssistantAI.Infrastructure/DentistAssistantAI.Infrastructure.csproj" />
 </Solution>

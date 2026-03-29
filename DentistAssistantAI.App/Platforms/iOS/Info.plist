@@ -28,5 +28,10 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+
+	<key>NSCameraUsageDescription</key>
+	<string>Take a photo of your dental issue for AI analysis.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Select a dental photo from your library for AI analysis.</string>
 </dict>
 </plist>

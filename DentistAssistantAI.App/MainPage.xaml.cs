@@ -1,24 +1,27 @@
-﻿namespace DentistAssistantAI.App
+﻿using DentistAssistantAI.App.ViewModels;
+using System.Collections.Specialized;
+
+namespace DentistAssistantAI.App
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private readonly MainPageViewModel _viewModel;
 
-        public MainPage()
+        public MainPage(MainPageViewModel viewModel)
         {
             InitializeComponent();
+            _viewModel = viewModel;
+            BindingContext = viewModel;
+            _viewModel.Messages.CollectionChanged += OnMessagesChanged;
         }
 
-        private void OnCounterClicked(object? sender, EventArgs e)
+        private void OnMessagesChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            count++;
+            if (e.Action != NotifyCollectionChangedAction.Add || _viewModel.Messages.Count == 0)
+                return;
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            Dispatcher.Dispatch(() =>
+                MessagesView.ScrollTo(_viewModel.Messages[^1], animate: true));
         }
     }
 }

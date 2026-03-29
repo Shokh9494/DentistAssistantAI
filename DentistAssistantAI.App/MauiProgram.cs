@@ -1,4 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Maui;
+using DentistAssistantAI.App.Security;
+using DentistAssistantAI.App.ViewModels;
+using DentistAssistantAI.Application.Services;
+using DentistAssistantAI.Core.Interfaces;
+using DentistAssistantAI.Infrastructure.Services;
+using Microsoft.Extensions.Logging;
 
 namespace DentistAssistantAI.App
 {
@@ -9,6 +15,7 @@ namespace DentistAssistantAI.App
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -16,8 +23,15 @@ namespace DentistAssistantAI.App
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
+
+            builder.Services.AddHttpClient<IOpenAIService, OpenAIService>(httpClient =>
+                new OpenAIService(httpClient, ApiKeys.OpenAIKey));
+
+            builder.Services.AddSingleton<AIManager>();
+            builder.Services.AddSingleton<MainPageViewModel>();
+            builder.Services.AddSingleton<MainPage>();
 
             return builder.Build();
         }
