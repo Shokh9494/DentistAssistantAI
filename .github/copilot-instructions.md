@@ -1,5 +1,8 @@
 # Copilot Instructions
 
+## General Guidelines
+- When breaking work into tasks for this repository, structure each task with acceptance criteria, steps to solve, and files to review.
+
 ## Stack and scope
 - This repository uses `.NET 10` and `.NET MAUI`; do not introduce `Xamarin.Forms` guidance or APIs.
 - Keep changes incremental. Preserve the current project split instead of collapsing layers.

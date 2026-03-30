@@ -1,4 +1,9 @@
 <Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/DentistAssistantAI.App.Tests/DentistAssistantAI.App.Tests.csproj" />
+    <Project Path="tests/DentistAssistantAI.Application.Tests/DentistAssistantAI.Application.Tests.csproj" />
+    <Project Path="tests/DentistAssistantAI.Infrastructure.Tests/DentistAssistantAI.Infrastructure.Tests.csproj" />
+  </Folder>
   <Project Path="DentistAssistantAI.App/DentistAssistantAI.App.csproj">
     <Deploy Solution="Debug|*" />
   </Project>

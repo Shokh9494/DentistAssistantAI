@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using DentistAssistantAI.App.Services;
 using DentistAssistantAI.App.Security;
 using DentistAssistantAI.App.ViewModels;
 using DentistAssistantAI.Application.Services;
@@ -29,6 +30,8 @@ namespace DentistAssistantAI.App
             builder.Services.AddHttpClient<IOpenAIService, OpenAIService>(httpClient =>
                 new OpenAIService(httpClient, ApiKeys.OpenAIKey));
 
+            builder.Services.AddSingleton<IMediaPickerService, MauiMediaPickerService>();
+            builder.Services.AddSingleton<IMediaFileCache, MediaFileCache>();
             builder.Services.AddSingleton<AIManager>();
             builder.Services.AddSingleton<MainPageViewModel>();
             builder.Services.AddSingleton<MainPage>();
