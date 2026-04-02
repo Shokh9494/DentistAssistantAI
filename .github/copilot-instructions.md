@@ -2,6 +2,7 @@
 
 ## General Guidelines
 - When breaking work into tasks for this repository, structure each task with acceptance criteria, steps to solve, and files to review.
+- Always write architectural plan in `code_plan.md` and task breakdown in `code_tasks.md` before implementing any code change. This is a mandatory workflow rule for the DentistAssistantAI repository.
 
 ## Stack and scope
 - This repository uses `.NET 10` and `.NET MAUI`; do not introduce `Xamarin.Forms` guidance or APIs.

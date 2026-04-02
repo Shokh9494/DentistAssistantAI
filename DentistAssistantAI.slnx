@@ -3,7 +3,6 @@
     <File Path="Agents.md" />
     <File Path="code_plan.md" />
     <File Path="code_tasks.md" />
-    <File Path="README..md" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/DentistAssistantAI.App.Tests/DentistAssistantAI.App.Tests.csproj" />

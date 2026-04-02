@@ -3,6 +3,12 @@
 > This document is the authoritative reference for any AI coding agent working on this repository.
 > Read it fully before making any changes. You are expected to act as a **senior .NET / MAUI developer**
 > who cares deeply about Clean Architecture, SOLID principles, testability, and idiomatic C#.
+>
+> **⚠️ MANDATORY WORKFLOW — before writing any code:**
+> 1. Write or update the architectural plan in **`code_plan.md`**.
+> 2. Write or update the task breakdown in **`code_tasks.md`**.
+> 3. Only then implement the code changes.
+> These two files must always reflect the current state of the codebase.
 
 ---
 
@@ -320,3 +326,45 @@ When an agent is given a task, structure the work as follows:
 - DentistAssistantAI.App/ViewModels/MainPageViewModel.cs
 - MauiProgram.cs
 ```
+
+---
+
+## 15. Mandatory Planning Files — HIGHEST PRIORITY RULE
+
+> This rule overrides everything else. No code change may be started without updating these files first.
+
+### `code_plan.md` — Architectural Plan
+
+Before implementing **any** feature, refactor, or fix:
+
+- Open `code_plan.md`.
+- Add or update the relevant section describing **what** is being built, **why** the design was chosen, and **which layers** are affected.
+- Record any significant design decisions (e.g., why a new interface is introduced, why a service lifetime changed).
+- Keep the "Current Implementation Status" table up to date after each completed change.
+
+### `code_tasks.md` — Task Breakdown
+
+Before writing the first line of code for any task:
+
+- Open `code_tasks.md`.
+- Add the task under `## 🔄 In Progress` with its acceptance criteria and affected files.
+- When the task is complete, move it to `## ✅ Done` with the completion date.
+- Tasks that are planned but not started live under `## 📋 Backlog`.
+
+### Workflow order (mandatory)
+
+```
+1. Receive task
+2. Update code_plan.md  — design + affected layers
+3. Update code_tasks.md — move task to In Progress
+4. Implement code changes
+5. Run: dotnet build + dotnet test
+6. Move task to Done in code_tasks.md
+```
+
+### File ownership
+
+| File | Purpose | When to update |
+|---|---|---|
+| `code_plan.md` | Architectural intent, design decisions, implementation status | Before and after every feature or refactor |
+| `code_tasks.md` | Live task board: Backlog → In Progress → Done | At the start and end of every task |
