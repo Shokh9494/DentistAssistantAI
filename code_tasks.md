@@ -1,169 +1,78 @@
-# DentistAssistantAI — Task Board
+# Code Tasks: Navigation Layout and Icon Fix
 
-> **Agent rule:** Every task must pass through Backlog → In Progress → Done.
-> Update this file at the **start** (move to In Progress) and **end** (move to Done) of every task.
-> See `Agents.md §15` for the mandatory workflow.
+## Task 1 — Create SVG Icon Assets
 
----
+**Acceptance criteria:**
+- `Resources/Images/icon_chat.svg` exists and contains a clean tooth/chat SVG path with a solid black fill.
+- `Resources/Images/icon_patients.svg` exists and contains a clean person SVG path with a solid black fill.
+- Both files are picked up automatically by the `<MauiImage Include="Resources\Images\*" />` glob.
 
-## ✅ Done
+**Steps to solve:**
+1. Create `DentistAssistantAI.App/Resources/Images/icon_chat.svg` with a tooth SVG shape.
+2. Create `DentistAssistantAI.App/Resources/Images/icon_patients.svg` with a person SVG shape.
 
-### TASK-001 — Initial Project Setup
-**Completed:** 2026-04-02
-**Description:** Bootstrap 4-layer Clean Architecture solution (.NET 10 / MAUI).
-**Deliverables:**
-- `DentistAssistantAI.Core` — `IOpenAIService`, `AIResult`, `DentalAIConfig`
-- `DentistAssistantAI.Application` — `AIManager`
-- `DentistAssistantAI.Infrastructure` — `OpenAIService` (text + vision)
-- `DentistAssistantAI.App` — MAUI chat UI, `MainPageViewModel`, `ChatMessageItem`
-- `MauiProgram.cs` — DI wiring, `UseMauiCommunityToolkit`
-- Platform targets: Android, iOS, macOS Catalyst, Windows
+**Files to review:** `DentistAssistantAI.App.csproj` (confirm glob), `Resources/Images/`
 
 ---
 
-### TASK-002 — Media Picker & Image Flow
-**Completed:** 2026-04-02
-**Description:** Allow the clinician to pick or capture a photo and attach it to a message.
-**Deliverables:**
-- `IMediaPickerService` + `MauiMediaPickerService`
-- `IMediaFileCache` + `MediaFileCache` (copy to `FileSystem.CacheDirectory`)
-- `PendingImagePath` / `HasPendingImage` / `PendingImageSource` in view model
-- `PickPhotoCommand` / `TakePhotoCommand` wired to toolbar
-- Image thumbnail shown in input area before send
-**Files changed:** `MainPageViewModel.cs`, `MainPage.xaml`, `MauiProgram.cs`
+## Task 2 — Update AppShell.xaml (structure and styling only)
+
+**Acceptance criteria:**
+- The `<TabBar>` block and its `<ShellContent>` children are removed from `AppShell.xaml`.
+- The `<Shell>` element retains existing tab bar colour properties.
+- Three new flyout styling properties are added to `<Shell>`: `FlyoutBackgroundColor`,
+  `Shell.FlyoutTextColor`, and `Shell.FlyoutIconImageTintColor`.
+- The XAML still compiles without errors.
+
+**Steps to solve:**
+1. Open `AppShell.xaml`.
+2. Delete the `<TabBar>` block (lines 14–20).
+3. Add `FlyoutBackgroundColor`, `Shell.FlyoutTextColor`, and `Shell.FlyoutIconImageTintColor`
+   attributes to the `<Shell>` element.
+
+**Files to review:** `AppShell.xaml`
 
 ---
 
-### TASK-003 — Unit Test Suite (all 3 projects)
-**Completed:** 2026-04-02
-**Description:** Add xUnit tests for all testable logic.
-**Deliverables:**
-- `DentistAssistantAI.App.Tests` — `MainPageViewModelTests`, `ChatMessageItemTests`, `ChatMessageTemplateSelectorTests`
-- `DentistAssistantAI.Application.Tests` — `AIManagerTests`
-- `DentistAssistantAI.Infrastructure.Tests` — `OpenAIServiceTests`, `StubHttpMessageHandler`
-- All test projects target `net10.0` (not MAUI TFM)
+## Task 3 — Update AppShell.xaml.cs (adaptive navigation construction)
+
+**Acceptance criteria:**
+- On Windows/Desktop (`DeviceInfo.Idiom == DeviceIdiom.Desktop`):
+  - Shell has `FlyoutBehavior = FlyoutBehavior.Locked`.
+  - Two `FlyoutItem` entries (Chat and Patients) with correct icons and `ContentTemplate` are added.
+  - `FlyoutIsPresented = true` so the sidebar starts open.
+- On all other idioms (Phone, Tablet, default):
+  - Shell has `FlyoutBehavior = FlyoutBehavior.Disabled`.
+  - A `TabBar` with two `ShellContent` entries (Chat and Patients) with correct icons and
+    `ContentTemplate` is added.
+- The code-behind compiles with no errors.
+
+**Steps to solve:**
+1. Open `AppShell.xaml.cs`.
+2. After `InitializeComponent()`, check `DeviceInfo.Idiom`.
+3. Implement `BuildDesktopNavigation()` private method:
+   - Set `FlyoutBehavior = FlyoutBehavior.Locked`.
+   - Create two `FlyoutItem` objects and add `ShellContent` children.
+   - Add both to `Items`.
+   - Set `FlyoutIsPresented = true`.
+4. Implement `BuildMobileNavigation()` private method:
+   - Set `FlyoutBehavior = FlyoutBehavior.Disabled`.
+   - Create a `TabBar` and add two `ShellContent` children with icons.
+   - Add the `TabBar` to `Items`.
+5. Call the appropriate method from the constructor.
+
+**Files to review:** `AppShell.xaml.cs`, `AppShell.xaml`, `Views/PatientsPage.xaml.cs`, `MainPage.xaml.cs`
 
 ---
 
-### TASK-004 — README.md & Agents.md
-**Completed:** 2026-04-02
-**Description:** Write complete project documentation and agent context files.
-**Deliverables:**
-- `README.md` — features, architecture, stack, getting started, testing, contributing
-- `Agents.md` — §1–14 agent context (layer rules, DI, MVVM, testing, task template)
+## Task 4 — Build Verification
 
----
+**Acceptance criteria:**
+- Project builds successfully targeting `net10.0-windows10.0.19041.0` with zero errors.
+- No regressions introduced to the DI registrations or page types.
 
-### TASK-005 — Mandatory Planning Files Rule
-**Completed:** 2026-04-02
-**Description:** Add `§15` to `Agents.md` enforcing `code_plan.md` and `code_tasks.md` workflow.
-**Deliverables:**
-- `Agents.md §15` — rule, workflow order, file ownership table
-- `code_plan.md` — initial architectural plan
-- `code_tasks.md` — initial task board (this file)
+**Steps to solve:**
+1. Run build via `run_build` tool.
+2. Fix any compilation errors reported.
 
----
-
-## 🔄 In Progress
-
-_No tasks currently in progress._
-
----
-
-## 📋 Backlog
-
-### TASK-006 — Load appsettings.json at Startup
-**Priority:** Medium
-**Description:** Wire `appsettings.json` (already a `MauiAsset`) into `IConfiguration` at startup in `MauiProgram.cs`.
-**Acceptance Criteria:**
-- [ ] `builder.Configuration` reads `appsettings.json` at runtime on all platforms
-- [ ] `OpenAI:ApiKey` can be read from config (as an alternative to `ApiKeys.cs`)
-- [ ] Existing `ApiKeys.cs` path still works as fallback
-**Affected layers:** App
-**Files to change:** `MauiProgram.cs`, `appsettings.json`
-
----
-
-### TASK-007 — Secure API Key Storage
-**Priority:** High
-**Description:** Remove the hardcoded API key from `ApiKeys.cs` and store it securely.
-**Acceptance Criteria:**
-- [ ] API key is read from `SecureStorage` or environment variable, not source code
-- [ ] First-run flow prompts the user to enter the key if absent
-- [ ] `ApiKeys.cs` is deleted or replaced with a service abstraction
-**Affected layers:** App, Infrastructure
-**Files to change:** `ApiKeys.cs`, `MauiProgram.cs`, `OpenAIService.cs`
-
----
-
-### TASK-008 — Streaming AI Responses
-**Priority:** Medium
-**Description:** Use OpenAI streaming (server-sent events) so the AI response appears word-by-word.
-**Acceptance Criteria:**
-- [ ] `IOpenAIService` supports a streaming overload returning `IAsyncEnumerable<string>`
-- [ ] `AIManager` passes the stream up to the view model
-- [ ] `MainPageViewModel` appends tokens to the last `ChatMessageItem` in real time
-- [ ] Fallback to non-streaming on error
-**Affected layers:** Core, Infrastructure, Application, App
-**Files to change:** `IOpenAIService.cs`, `OpenAIService.cs`, `AIManager.cs`, `MainPageViewModel.cs`
-
----
-
-### TASK-009 — Conversation History
-**Priority:** Medium
-**Description:** Send the full conversation thread with each request so the AI has context.
-**Acceptance Criteria:**
-- [ ] `OpenAIService.SendAsync` accepts a `IReadOnlyList<ChatMessage>` history parameter
-- [ ] `AIManager` maintains conversation state and passes it on each call
-- [ ] History is trimmed/truncated to stay within model token limits
-**Affected layers:** Core, Infrastructure, Application, App
-**Files to change:** `IOpenAIService.cs`, `OpenAIService.cs`, `AIManager.cs`, `MainPageViewModel.cs`
-
----
-
-### TASK-010 — Image Compression Before Upload
-**Priority:** Low
-**Description:** Compress images to JPEG at ≤1280px longest side before base64 encoding to reduce token usage and cost.
-**Acceptance Criteria:**
-- [ ] Image is resized in `OpenAIService` or a new `IImageCompressor` service before encoding
-- [ ] Original file is not modified
-- [ ] Compressed bytes are used only for the API request
-**Affected layers:** Infrastructure (or App/Services)
-**Files to change:** `OpenAIService.cs` or new `ImageCompressor.cs`
-
----
-
-### TASK-011 — Dark Mode Support
-**Priority:** Low
-**Description:** Add a dark colour scheme that respects the OS theme setting.
-**Acceptance Criteria:**
-- [ ] `App.xaml` defines `AppThemeBinding`-based resource dictionary for light/dark
-- [ ] Chat bubbles, background, and input bar all adapt to the OS theme
-- [ ] No hardcoded hex colours remain in `MainPage.xaml`
-**Affected layers:** App
-**Files to change:** `App.xaml`, `MainPage.xaml`, new `Styles/Colors.xaml`
-
----
-
-### TASK-012 — CI/CD Pipeline (GitHub Actions)
-**Priority:** Medium
-**Description:** Add a GitHub Actions workflow that builds and runs all tests on push.
-**Acceptance Criteria:**
-- [ ] Workflow triggers on push to `master` and all pull requests
-- [ ] `dotnet build` succeeds for `net10.0-windows10.0.19041.0`
-- [ ] `dotnet test` runs all three test projects and reports results
-- [ ] API key is injected from a GitHub secret (never from source)
-**Affected layers:** DevOps
-**Files to change:** `.github/workflows/ci.yml` (new)
-
----
-
-### TASK-013 — Localisation of UI Strings
-**Priority:** Low
-**Description:** Externalise all user-visible UI strings into `.resx` resource files for Uzbek, Russian, and English.
-**Acceptance Criteria:**
-- [ ] All hardcoded strings in `MainPage.xaml` and `MainPageViewModel.cs` moved to resources
-- [ ] Three locales provided: `uz`, `ru`, `en`
-- [ ] Language switches with OS locale automatically
-**Affected layers:** App
-**Files to change:** New `Resources/Strings/`, `MainPage.xaml`, `MainPageViewModel.cs`
+**Files to review:** build output

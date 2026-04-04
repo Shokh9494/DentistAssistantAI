@@ -2,6 +2,7 @@
 using DentistAssistantAI.App.Services;
 using DentistAssistantAI.App.Security;
 using DentistAssistantAI.App.ViewModels;
+using DentistAssistantAI.App.Views;
 using DentistAssistantAI.Application.Services;
 using DentistAssistantAI.Core.Interfaces;
 using DentistAssistantAI.Infrastructure.Services;
@@ -27,14 +28,30 @@ namespace DentistAssistantAI.App
             builder.Logging.AddDebug();
 #endif
 
+            // AI service
             builder.Services.AddHttpClient<IOpenAIService, OpenAIService>(httpClient =>
                 new OpenAIService(httpClient, ApiKeys.OpenAIKey));
 
+            // Media services
             builder.Services.AddSingleton<IMediaPickerService, MauiMediaPickerService>();
             builder.Services.AddSingleton<IMediaFileCache, MediaFileCache>();
+
+            // Patient service
+            builder.Services.AddSingleton<IPatientService, PatientService>();
+
+            // Application layer
             builder.Services.AddSingleton<AIManager>();
+
+            // View models
             builder.Services.AddSingleton<MainPageViewModel>();
+            builder.Services.AddSingleton<PatientsPageViewModel>();
+
+            // Pages
             builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton<PatientsPage>();
+
+            // Shell
+            builder.Services.AddSingleton<AppShell>();
 
             return builder.Build();
         }

@@ -3,12 +3,12 @@
     x:Class="DentistAssistantAI.App.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:DentistAssistantAI.App"
-    Title="DentistAssistantAI.App">
-
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarBackgroundColor="{DynamicResource CardBackground}"
+    Shell.TabBarForegroundColor="{DynamicResource Primary}"
+    Shell.TabBarUnselectedColor="{DynamicResource TextSecondary}"
+    Shell.TabBarTitleColor="{DynamicResource TextPrimary}"
+    FlyoutBackgroundColor="{DynamicResource CardBackground}">
 
 </Shell>
+

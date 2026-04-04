@@ -53,4 +53,10 @@
 		<ProjectReference Include="..\DentistAssistantAI.Infrastructure\DentistAssistantAI.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="Views\PatientsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

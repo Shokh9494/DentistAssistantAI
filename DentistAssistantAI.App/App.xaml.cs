@@ -2,17 +2,17 @@
 {
     public partial class App : Microsoft.Maui.Controls.Application
     {
-        private readonly MainPage _mainPage;
+        private readonly AppShell _shell;
 
-        public App(MainPage mainPage)
+        public App(AppShell shell)
         {
             InitializeComponent();
-            _mainPage = mainPage;
+            _shell = shell;
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(_mainPage);
+            return new Window(_shell);
         }
     }
 }

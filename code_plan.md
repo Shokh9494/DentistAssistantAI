@@ -1,145 +1,112 @@
-# DentistAssistantAI — Code Plan
+# Code Plan: Navigation Layout and Icon Fix
 
-> **Agent rule:** Update this file before and after every feature, refactor, or fix.
-> See `Agents.md §15` for the mandatory workflow.
+## Problem Analysis
+
+### Problem 1 — Windows: Navigation Bar at Top Instead of Left Sidebar
+
+**Root cause:** `AppShell.xaml` uses a `<TabBar>` with two `ShellContent` items.
+MAUI Shell renders `TabBar` as:
+- Horizontal tabs at the **top** on Windows (user sees "Chat | Patients" across the header)
+- Horizontal tabs at the **bottom** on Android/iOS
+
+The design document shows:
+- **Windows/Desktop:** A persistent left sidebar listing "Chat" and "Patients" items with icons.
+- **Mobile:** A bottom tab bar with an icon and label per tab.
+
+MAUI only renders a left sidebar when using `FlyoutItem` with `FlyoutBehavior = Locked`, not
+when using `TabBar`. The navigation structure must therefore change, conditioned on the device idiom.
+
+### Problem 2 — Mobile: Icons Not Showing in Tab Bar
+
+**Root cause (three layers):**
+1. Neither `ShellContent` in the current `<TabBar>` sets an `Icon` property.
+2. No tab-bar icon image files exist in `Resources/Images/` (only `dotnet_bot.png` is present).
+3. MAUI tab bar icons require a proper image asset (PNG or SVG). Emoji characters used in
+   `Label.Text` cannot be used as `ShellContent.Icon`.
 
 ---
 
-## 1. Project Goal
+## Solution Architecture
 
-Build a cross-platform **.NET 10 / .NET MAUI** clinical AI assistant for dental professionals.
-The app sends text and clinical images to the **OpenAI Chat Completions API** and renders structured
-diagnostic responses in a native mobile/desktop chat UI. The language of the response automatically
-matches the language the clinician writes in (Uzbek, Russian, or English).
+### Strategy: Adaptive Navigation in AppShell.xaml.cs
 
----
+`AppShell.xaml` will keep only the `<Shell>` element with its colour and style attached
+properties. All navigation children (TabBar or FlyoutItems) are built programmatically in the
+constructor of `AppShell.xaml.cs` based on `DeviceInfo.Idiom`.
 
-## 2. Architectural Decisions
+This is the minimal-change approach that:
+- Keeps Shell as the navigation root (no new layers).
+- Avoids duplicating full XAML files per platform.
+- Gives each idiom the exact Shell structure MAUI needs to render the correct chrome.
 
-### 2.1 Why Clean Architecture (4 layers)?
+#### Desktop / Windows path (DeviceIdiom.Desktop)
 
-| Decision | Rationale |
+FlyoutBehavior = Locked means the sidebar is always visible.
+Two FlyoutItem entries navigate to MainPage and PatientsPage.
+FlyoutIsPresented = true ensures the sidebar starts open on launch.
+
+MAUI maps this to a WinUI NavigationView pane on the left, matching the design.
+
+#### Mobile path (DeviceIdiom.Phone, DeviceIdiom.Tablet, and default)
+
+FlyoutBehavior = Disabled means no flyout or hamburger is shown.
+A TabBar containing two ShellContent items renders as a bottom tab bar.
+
+### Strategy: SVG Icon Assets
+
+Two minimal SVG files are added to `Resources/Images/`. The existing project glob
+`<MauiImage Include="Resources\Images\*" />` auto-includes them at build time.
+MAUI converts them to platform-appropriate raster sizes automatically.
+
+| File | Purpose |
+|------|---------|
+| Resources/Images/icon_chat.svg | Tooth icon for the Chat tab and flyout item |
+| Resources/Images/icon_patients.svg | Person icon for the Patients tab and flyout item |
+
+Icon SVG fills must be opaque (for example fill="#000000") so MAUI platform tinting can
+override them with the correct selected or unselected colour at runtime.
+
+### Strategy: Flyout Sidebar Styling (Desktop)
+
+The flyout background, text, and icon tint colours are set as attributes on the `<Shell>` element
+in `AppShell.xaml` to match the existing dark theme.
+
+| Shell property | Value |
 |---|---|
-| Separate `Core` layer | Contracts and models must be stable; no framework dependency leaks |
-| Separate `Application` layer | Use-case orchestration stays testable without HTTP or MAUI |
-| Separate `Infrastructure` layer | OpenAI HTTP code is swappable and testable with a stub handler |
-| MAUI only in `App` layer | Platform APIs (`MediaPicker`, `FileSystem`) cannot be used in unit tests |
-
-### 2.2 Why CommunityToolkit.Mvvm?
-
-- Source generators eliminate `INotifyPropertyChanged` boilerplate.
-- `[RelayCommand]` auto-generates `ICommand` + async wrappers.
-- `[ObservableProperty]` + `[NotifyCanExecuteChangedFor]` keeps `CanExecute` always in sync.
-- Standard across the MAUI ecosystem; well-maintained by Microsoft.
-
-### 2.3 Why hand-written fakes over Moq/NSubstitute?
-
-- No additional NuGet dependencies in test projects.
-- Fakes are explicit and readable; behaviour is obvious without magic.
-- Test projects target `net10.0` (not MAUI TFM) to avoid MAUI initialisation overhead.
-
-### 2.4 Why two AI models?
-
-| Model | Usage | Reason |
-|---|---|---|
-| `gpt-4o-mini` | Text-only queries | Fast and cost-efficient; no vision needed |
-| `gpt-4o` | Image/X-ray analysis | Best vision accuracy for medical imaging |
-
-### 2.5 Image caching strategy
-
-`MauiMediaPickerService` returns a `FileResult` from the platform picker.
-`MediaFileCache.CopyToLocalCacheAsync()` copies it into `FileSystem.CacheDirectory` before use.
-This is required for cross-platform safety — the original `FileResult` path is not guaranteed
-to be readable across all platforms after the picker closes.
+| FlyoutBackgroundColor | DynamicResource CardBackground (#121826) |
+| Shell.FlyoutTextColor | DynamicResource TextPrimary (white) |
+| Shell.FlyoutIconImageTintColor | DynamicResource TextPrimary |
 
 ---
 
-## 3. Layer Dependency Map
+## Files to Change
 
-```
-App  →  Application  →  Core  ←  Infrastructure
-         ↓                         ↓
-    AIManager               OpenAIService
-         ↓
-  MainPageViewModel
-```
+| File | Action | Reason |
+|------|--------|--------|
+| AppShell.xaml | Edit: remove TabBar children; add flyout colour properties | XAML must not pre-define items that code-behind will build |
+| AppShell.xaml.cs | Edit: add BuildDesktopNavigation and BuildMobileNavigation | Adaptive idiom-based navigation construction |
+| Resources/Images/icon_chat.svg | Create | Tooth SVG icon for Chat tab and flyout item |
+| Resources/Images/icon_patients.svg | Create | Person SVG icon for Patients tab and flyout item |
 
-Strict rule: arrows only point inward. `Core` has zero outward dependencies.
-
----
-
-## 4. Current Implementation Status
-
-| Component | Status | Notes |
-|---|---|---|
-| `DentalAIConfig` | ✅ Done | System prompt, model names, image instruction |
-| `IOpenAIService` / `AIResult` | ✅ Done | Core contracts stable |
-| `OpenAIService` | ✅ Done | Text + vision requests, base64 encoding, error handling |
-| `AIManager` | ✅ Done | Thin facade, error mapping |
-| `MainPageViewModel` | ✅ Done | Send, pick photo, take photo, busy guard, CanExecute |
-| `ChatMessageItem` | ✅ Done | Immutable, timestamp, image support |
-| `ChatMessageTemplateSelector` | ✅ Done | User vs AI bubble selection |
-| `MainPage.xaml` | ✅ Done | Compiled bindings, CollectionView, toolbar |
-| `MainPage.xaml.cs` | ✅ Done | Auto-scroll only |
-| `MauiProgram.cs` | ✅ Done | DI wiring, `UseMauiCommunityToolkit` |
-| `App.xaml.cs` | ✅ Done | DI-resolved `MainPage` via `CreateWindow` |
-| `IMediaPickerService` + impl | ✅ Done | Abstracted for testability |
-| `IMediaFileCache` + impl | ✅ Done | Cross-platform cache copy |
-| Unit tests — App | ✅ Done | ViewModel, ChatMessageItem, TemplateSelector |
-| Unit tests — Application | ✅ Done | AIManager |
-| Unit tests — Infrastructure | ✅ Done | OpenAIService, StubHttpMessageHandler |
-| `appsettings.json` loading | ⏳ Not wired | File exists as MauiAsset but not loaded at startup |
-| API key management | ⚠️ Hardcoded | `ApiKeys.cs` — needs env var or secure storage |
+No changes are needed to the .csproj, services, view models, or page XAML files.
 
 ---
 
-## 5. Key File Locations
+## Visual Layout Targets
 
-| Concern | File |
-|---|---|
-| AI prompts + model names | `DentistAssistantAI.Core/Configuration/DentalAIConfig.cs` |
-| OpenAI HTTP integration | `DentistAssistantAI.Infrastructure/Services/OpenAIService.cs` |
-| Use-case orchestration | `DentistAssistantAI.Application/Services/AIManager.cs` |
-| UI state + commands | `DentistAssistantAI.App/ViewModels/MainPageViewModel.cs` |
-| DI registrations + startup | `DentistAssistantAI.App/MauiProgram.cs` |
-| Chat bubble model | `DentistAssistantAI.App/Models/ChatMessageItem.cs` |
-| Template selector | `DentistAssistantAI.App/Templates/ChatMessageTemplateSelector.cs` |
-| API key | `DentistAssistantAI.App/Security/ApiKeys.cs` |
+Desktop (Windows):
+Left pane with DentAI header, Chat item, and Patients item. Right area shows page content.
+
+Mobile (Android / iOS):
+Full-screen page content with a bottom tab bar showing Chat and Patients with icons and labels.
 
 ---
 
-## 6. Design Constraints
+## Risks and Constraints
 
-1. **No Xamarin.Forms APIs** — `.NET MAUI` only.
-2. **No Shell navigation** — single-page window model.
-3. **No mocking frameworks** — hand-written fakes only.
-4. **Compiled XAML bindings** — `x:DataType` required on every `DataTemplate`.
-5. **`DentalAIConfig` is the single source of truth** for all prompt text and model names.
-6. **Test projects target `net10.0`**, not the MAUI TFM, to keep tests fast and dependency-free.
-
----
-
-## 7. Planned Improvements (Backlog)
-
-| # | Improvement | Affected layers |
-|---|---|---|
-| 1 | Load `appsettings.json` at startup via `IConfiguration` | App |
-| 2 | Move API key to secure storage / environment variable | App, Infrastructure |
-| 3 | Streaming response support (server-sent events) | Core, Infrastructure, Application, App |
-| 4 | Conversation history — send full message thread per request | Core, Infrastructure, Application |
-| 5 | Export chat as PDF | App |
-| 6 | Dark mode support | App (XAML resources) |
-| 7 | Localisation of UI strings (Uzbek / Russian / English) | App |
-| 8 | Offline error state with retry | Infrastructure, App |
-| 9 | Image compression before base64 encoding | Infrastructure |
-| 10 | CI/CD pipeline (GitHub Actions) | DevOps |
-
----
-
-## 8. Change Log
-
-| Date | Change | Author |
-|---|---|---|
-| 2026-04-02 | Initial project setup — 4-layer Clean Architecture, MAUI chat UI | Initial |
-| 2026-04-02 | README.md and Agents.md populated | Agent |
-| 2026-04-02 | code_plan.md and code_tasks.md created | Agent |
+- FlyoutBehavior.Locked on Windows draws a WinUI NavigationView pane whose exact visual chrome
+  (font, item height, hover colour) is controlled by WinUI, not MAUI styles. The sidebar will be
+  functionally correct; pixel-perfect matching depends on WinUI defaults.
+- FlyoutIsPresented = true on Desktop ensures the sidebar starts expanded. The user can still
+  collapse it via the WinUI hamburger toggle button at the top of the pane.
+- SVG fills must be solid and opaque so MAUI tinting pipeline works correctly on all platforms.

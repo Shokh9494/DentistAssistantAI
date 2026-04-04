@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DentistAssistantAI.App.ViewModels"
@@ -8,7 +8,7 @@
              x:DataType="vm:MainPageViewModel"
              Shell.NavBarIsVisible="False"
              NavigationPage.HasNavigationBar="False"
-             BackgroundColor="#F2F2F7">
+             BackgroundColor="{StaticResource AppBackground}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -20,7 +20,7 @@
                     <Grid ColumnDefinitions="38,*" ColumnSpacing="8">
 
                         <Border Grid.Column="0"
-                                Background="#1E40AF"
+                                Background="{StaticResource Primary}"
                                 StrokeShape="RoundRectangle 19"
                                 Stroke="Transparent"
                                 WidthRequest="38"
@@ -33,20 +33,20 @@
                         </Border>
 
                         <VerticalStackLayout Grid.Column="1" Spacing="3">
-                            <Border Background="White"
+                            <Border Background="{StaticResource AiBubble}"
                                     StrokeShape="RoundRectangle 18,18,18,2"
                                     Stroke="Transparent"
                                     Padding="14,10">
                                 <Border.Shadow>
-                                    <Shadow Brush="Black" Offset="0,2" Radius="8" Opacity="0.07" />
+                                    <Shadow Brush="Black" Offset="0,2" Radius="8" Opacity="0.15" />
                                 </Border.Shadow>
                                 <Label Text="{Binding Text}"
-                                       TextColor="#1C1C1E"
+                                       TextColor="{StaticResource TextPrimary}"
                                        LineBreakMode="WordWrap"
                                        FontSize="15" />
                             </Border>
                             <Label Text="{Binding TimestampText}"
-                                   TextColor="#AEAEB2"
+                                   TextColor="{StaticResource TextSecondary}"
                                    FontSize="11"
                                    Margin="4,0,0,0" />
                         </VerticalStackLayout>
@@ -60,7 +60,7 @@
                           x:DataType="models:ChatMessageItem">
                 <Grid Padding="64,4,12,4">
                     <VerticalStackLayout Spacing="3" HorizontalOptions="End">
-                        <Border Background="#2563EB"
+                        <Border Background="{StaticResource UserBubble}"
                                 StrokeShape="RoundRectangle 18,18,2,18"
                                 Stroke="Transparent"
                                 Padding="10"
@@ -81,14 +81,14 @@
 
                                 <!-- Text -->
                                 <Label Text="{Binding Text}"
-                                       TextColor="White"
+                                       TextColor="{StaticResource TextPrimary}"
                                        LineBreakMode="WordWrap"
                                        FontSize="15"
                                        IsVisible="{Binding HasText}" />
                             </VerticalStackLayout>
                         </Border>
                         <Label Text="{Binding TimestampText}"
-                               TextColor="#AEAEB2"
+                               TextColor="{StaticResource TextSecondary}"
                                FontSize="11"
                                HorizontalOptions="End"
                                Margin="0,0,4,0" />
@@ -108,14 +108,14 @@
 
         <!-- ── Header ── -->
         <Border Grid.Row="0"
-                Background="#1E40AF"
+                Background="{StaticResource CardBackground}"
                 Stroke="Transparent">
             <Border.Shadow>
-                <Shadow Brush="Black" Offset="0,3" Radius="10" Opacity="0.18" />
+                <Shadow Brush="Black" Offset="0,3" Radius="10" Opacity="0.25" />
             </Border.Shadow>
             <Grid Padding="16,14">
                 <HorizontalStackLayout Spacing="12">
-                    <Border Background="#3B82F6"
+                    <Border Background="{StaticResource Primary}"
                             StrokeShape="RoundRectangle 24"
                             Stroke="Transparent"
                             WidthRequest="48"
@@ -126,10 +126,10 @@
                                FontSize="26" />
                     </Border>
                     <VerticalStackLayout VerticalOptions="Center" Spacing="3">
-                        <Label Text="Dentist AI"
+                        <Label Text="DentAI"
                                FontSize="17"
                                FontAttributes="Bold"
-                               TextColor="White" />
+                               TextColor="{StaticResource TextPrimary}" />
                         <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
                             <Ellipse Fill="#34D399"
                                      WidthRequest="7"
@@ -137,7 +137,7 @@
                                      VerticalOptions="Center" />
                             <Label Text="Online"
                                    FontSize="12"
-                                   TextColor="#93C5FD" />
+                                   TextColor="{StaticResource TextSecondary}" />
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
                 </HorizontalStackLayout>
@@ -156,21 +156,21 @@
         <Grid Grid.Row="2"
               Padding="12,0,64,8"
               IsVisible="{Binding IsBusy}">
-            <Border Background="White"
+            <Border Background="{StaticResource AiBubble}"
                     StrokeShape="RoundRectangle 18,18,18,2"
                     Stroke="Transparent"
                     Padding="14,10"
                     HorizontalOptions="Start">
                 <Border.Shadow>
-                    <Shadow Brush="Black" Offset="0,2" Radius="8" Opacity="0.07" />
+                    <Shadow Brush="Black" Offset="0,2" Radius="8" Opacity="0.15" />
                 </Border.Shadow>
                 <HorizontalStackLayout Spacing="8">
                     <ActivityIndicator IsRunning="True"
-                                       Color="#2563EB"
+                                       Color="{StaticResource Primary}"
                                        WidthRequest="18"
                                        HeightRequest="18" />
                     <Label Text="AI is typing…"
-                           TextColor="#8E8E93"
+                           TextColor="{StaticResource TextSecondary}"
                            FontSize="14"
                            VerticalOptions="Center" />
                 </HorizontalStackLayout>
@@ -180,7 +180,7 @@
         <!-- ── Pending image preview ── -->
         <Grid Grid.Row="3"
               IsVisible="{Binding HasPendingImage}"
-              BackgroundColor="White"
+              BackgroundColor="{StaticResource CardBackground}"
               Padding="12,8">
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
                 <Border StrokeShape="RoundRectangle 10"
@@ -194,11 +194,11 @@
                 </Border>
                 <VerticalStackLayout VerticalOptions="Center" Spacing="2">
                     <Label Text="📎 Image attached"
-                           TextColor="#374151"
+                           TextColor="{StaticResource TextPrimary}"
                            FontSize="14"
                            FontAttributes="Bold" />
                     <Label Text="Tap ✕ to remove"
-                           TextColor="#9CA3AF"
+                           TextColor="{StaticResource TextSecondary}"
                            FontSize="12" />
                 </VerticalStackLayout>
             </HorizontalStackLayout>
@@ -207,7 +207,7 @@
                     Text="✕"
                     Command="{Binding ClearPendingImageCommand}"
                     BackgroundColor="#EF4444"
-                    TextColor="White"
+                    TextColor="{StaticResource TextPrimary}"
                     CornerRadius="16"
                     WidthRequest="32"
                     HeightRequest="32"
@@ -218,10 +218,10 @@
 
         <!-- ── Input bar ── -->
         <Border Grid.Row="4"
-                Background="White"
+                Background="{StaticResource CardBackground}"
                 Stroke="Transparent">
             <Border.Shadow>
-                <Shadow Brush="Black" Offset="0,-2" Radius="12" Opacity="0.08" />
+                <Shadow Brush="Black" Offset="0,-2" Radius="12" Opacity="0.2" />
             </Border.Shadow>
             <Grid ColumnDefinitions="Auto,Auto,*,Auto"
                   ColumnSpacing="8"
@@ -231,8 +231,8 @@
                 <Button Grid.Column="0"
                         Text="📷"
                         Command="{Binding TakePhotoCommand}"
-                        BackgroundColor="#F3F4F6"
-                        TextColor="#374151"
+                        BackgroundColor="{StaticResource InputBackground}"
+                        TextColor="{StaticResource TextPrimary}"
                         CornerRadius="22"
                         WidthRequest="44"
                         HeightRequest="44"
@@ -244,8 +244,8 @@
                 <Button Grid.Column="1"
                         Text="🖼"
                         Command="{Binding PickPhotoCommand}"
-                        BackgroundColor="#F3F4F6"
-                        TextColor="#374151"
+                        BackgroundColor="{StaticResource InputBackground}"
+                        TextColor="{StaticResource TextPrimary}"
                         CornerRadius="22"
                         WidthRequest="44"
                         HeightRequest="44"
@@ -255,17 +255,17 @@
 
                 <!-- Entry -->
                 <Border Grid.Column="2"
-                        Background="#F2F2F7"
+                        Background="{StaticResource InputBackground}"
                         StrokeShape="RoundRectangle 24"
                         Stroke="Transparent"
                         Padding="16,0"
                         MinimumHeightRequest="46">
                     <Entry Placeholder="Type your question…"
-                           PlaceholderColor="#AEAEB2"
+                           PlaceholderColor="{StaticResource TextSecondary}"
                            Text="{Binding UserInput}"
                            ReturnCommand="{Binding SendMessageCommand}"
                            VerticalOptions="Center"
-                           TextColor="#1C1C1E"
+                           TextColor="{StaticResource TextPrimary}"
                            FontSize="15" />
                 </Border>
 
@@ -273,8 +273,8 @@
                 <Button Grid.Column="3"
                         Text="➤"
                         Command="{Binding SendMessageCommand}"
-                        BackgroundColor="#2563EB"
-                        TextColor="White"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="{StaticResource TextPrimary}"
                         CornerRadius="24"
                         WidthRequest="48"
                         HeightRequest="48"

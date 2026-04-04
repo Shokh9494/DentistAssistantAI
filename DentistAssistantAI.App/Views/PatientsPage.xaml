@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DentistAssistantAI.App.ViewModels"
+             xmlns:core="clr-namespace:DentistAssistantAI.Core.Models;assembly=DentistAssistantAI.Core"
+             x:Class="DentistAssistantAI.App.Views.PatientsPage"
+             x:DataType="vm:PatientsPageViewModel"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource AppBackground}">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <!-- ── Header ── -->
+        <Border Grid.Row="0"
+                Background="{StaticResource CardBackground}"
+                Stroke="Transparent">
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="0,3" Radius="10" Opacity="0.25" />
+            </Border.Shadow>
+            <Grid Padding="16,14">
+                <HorizontalStackLayout Spacing="12">
+                    <Border Background="{StaticResource Primary}"
+                            StrokeShape="RoundRectangle 24"
+                            Stroke="Transparent"
+                            WidthRequest="48"
+                            HeightRequest="48">
+                        <Label Text="🦷"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               FontSize="26" />
+                    </Border>
+                    <Label Text="DentAI"
+                           FontSize="17"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Grid>
+        </Border>
+
+        <!-- ── Add Patient button ── -->
+        <Border Grid.Row="1"
+                Background="{StaticResource CardBackground}"
+                Stroke="Transparent"
+                Padding="16,8,16,12">
+            <Button Text="＋  Add Patient"
+                    Command="{Binding AddPatientCommand}"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="{StaticResource TextPrimary}"
+                    FontAttributes="Bold"
+                    FontSize="15"
+                    CornerRadius="12"
+                    HeightRequest="50"
+                    HorizontalOptions="Fill"
+                    BorderWidth="0" />
+        </Border>
+
+        <!-- ── Patient list ── -->
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Patients}"
+                        SelectionMode="None"
+                        Margin="16,8,16,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="core:Patient">
+                    <Border Background="{StaticResource CardBackground}"
+                            StrokeShape="RoundRectangle 14"
+                            Stroke="Transparent"
+                            Padding="16,12"
+                            Margin="0,0,0,8">
+                        <Border.Shadow>
+                            <Shadow Brush="Black" Offset="0,2" Radius="6" Opacity="0.2" />
+                        </Border.Shadow>
+                        <Grid ColumnDefinitions="48,*,24"
+                              ColumnSpacing="14"
+                              VerticalOptions="Center">
+
+                            <!-- Avatar circle with initials -->
+                            <Border Grid.Column="0"
+                                    Background="{StaticResource Primary}"
+                                    StrokeShape="RoundRectangle 24"
+                                    Stroke="Transparent"
+                                    WidthRequest="48"
+                                    HeightRequest="48"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding Initials}"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       FontAttributes="Bold"
+                                       FontSize="14"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+
+                            <!-- Name + last visit -->
+                            <VerticalStackLayout Grid.Column="1"
+                                                 VerticalOptions="Center"
+                                                 Spacing="3">
+                                <Label Text="{Binding Name}"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       FontAttributes="Bold"
+                                       FontSize="15"
+                                       LineBreakMode="NoWrap" />
+                                <Label Text="{Binding LastVisit, StringFormat='{0:MMMM d, yyyy}'}"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       FontSize="13" />
+                            </VerticalStackLayout>
+
+                            <!-- Chevron -->
+                            <Label Grid.Column="2"
+                                   Text="›"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   FontSize="26"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center" />
+
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+</ContentPage>

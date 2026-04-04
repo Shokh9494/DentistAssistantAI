@@ -334,10 +334,9 @@ When an agent is given a task, structure the work as follows:
 > This rule overrides everything else. No code change may be started without updating these files first.
 
 ### `code_plan.md` — Architectural Plan
+ 
+Rules for plan before implementing **any** feature, refactor, or fix:
 
-Before implementing **any** feature, refactor, or fix:
-
-- Open `code_plan.md`.
 - Add or update the relevant section describing **what** is being built, **why** the design was chosen, and **which layers** are affected.
 - Record any significant design decisions (e.g., why a new interface is introduced, why a service lifetime changed).
 - Keep the "Current Implementation Status" table up to date after each completed change.
@@ -345,8 +344,7 @@ Before implementing **any** feature, refactor, or fix:
 ### `code_tasks.md` — Task Breakdown
 
 Before writing the first line of code for any task:
-
-- Open `code_tasks.md`.
+- Ask confirmation before implementing each task.
 - Add the task under `## 🔄 In Progress` with its acceptance criteria and affected files.
 - When the task is complete, move it to `## ✅ Done` with the completion date.
 - Tasks that are planned but not started live under `## 📋 Backlog`.
