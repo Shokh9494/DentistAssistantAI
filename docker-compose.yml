@@ -1,0 +1,11 @@
+services:
+  webapi:
+    build:
+      context: .
+      dockerfile: DentistAssistantAI.WebApi/Dockerfile
+    ports:
+      - "5186:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - OpenAI__ApiKey=${OPENAI_API_KEY}
+    restart: unless-stopped
