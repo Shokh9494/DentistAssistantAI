@@ -1,9 +1,7 @@
 using DentistAssistantAI.App.ViewModels;
 using DentistAssistantAI.App.Services;
-using DentistAssistantAI.Application.Services;
 using DentistAssistantAI.Core.Configuration;
 using DentistAssistantAI.Core.Interfaces;
-using DentistAssistantAI.Core.Models;
 using Xunit;
 
 namespace DentistAssistantAI.App.Tests.ViewModels;
@@ -13,7 +11,7 @@ public sealed class MainPageViewModelTests
     [Fact]
     public void Constructor_SeedsWelcomeMessage()
     {
-        var viewModel = CreateViewModel(new FakeOpenAIService());
+        var viewModel = CreateViewModel(new FakeAIManager());
 
         Assert.Single(viewModel.Messages);
         Assert.False(viewModel.Messages[0].IsFromUser);
@@ -23,7 +21,7 @@ public sealed class MainPageViewModelTests
     [Fact]
     public void SendMessageCommand_NoTextAndNoImage_CannotExecute()
     {
-        var viewModel = CreateViewModel(new FakeOpenAIService());
+        var viewModel = CreateViewModel(new FakeAIManager());
 
         Assert.False(viewModel.SendMessageCommand.CanExecute(null));
     }
@@ -31,7 +29,7 @@ public sealed class MainPageViewModelTests
     [Fact]
     public void SendMessageCommand_TextPresent_CanExecute()
     {
-        var viewModel = CreateViewModel(new FakeOpenAIService());
+        var viewModel = CreateViewModel(new FakeAIManager());
         viewModel.UserInput = "Question";
 
         Assert.True(viewModel.SendMessageCommand.CanExecute(null));
@@ -40,7 +38,7 @@ public sealed class MainPageViewModelTests
     [Fact]
     public void SendMessageCommand_PendingImagePresent_CanExecute()
     {
-        var viewModel = CreateViewModel(new FakeOpenAIService());
+        var viewModel = CreateViewModel(new FakeAIManager());
         viewModel.PendingImagePath = "C:\\temp\\scan.jpg";
 
         Assert.True(viewModel.SendMessageCommand.CanExecute(null));
@@ -49,22 +47,15 @@ public sealed class MainPageViewModelTests
     [Fact]
     public async Task SendMessageAsync_TextInput_TrimmedAndMessagesAppendedInOrder()
     {
-        var openAIService = new FakeOpenAIService
-        {
-            Result = new AIResult
-            {
-                IsSuccess = true,
-                Content = "AI answer"
-            }
-        };
-        var viewModel = CreateViewModel(openAIService);
+        var aiManager = new FakeAIManager { Response = "AI answer" };
+        var viewModel = CreateViewModel(aiManager);
         viewModel.UserInput = "  Need diagnosis  ";
         viewModel.PendingImagePath = "C:\\temp\\scan.jpg";
 
         await viewModel.SendMessageCommand.ExecuteAsync(null);
 
-        Assert.Equal("Need diagnosis", openAIService.LastPrompt);
-        Assert.Equal("C:\\temp\\scan.jpg", openAIService.LastImagePath);
+        Assert.Equal("Need diagnosis", aiManager.LastQuestion);
+        Assert.Equal("C:\\temp\\scan.jpg", aiManager.LastImagePath);
         Assert.Equal(string.Empty, viewModel.UserInput);
         Assert.Null(viewModel.PendingImagePath);
         Assert.False(viewModel.IsBusy);
@@ -81,21 +72,14 @@ public sealed class MainPageViewModelTests
     [Fact]
     public async Task SendMessageAsync_ImageOnly_UsesDefaultImagePrompt()
     {
-        var openAIService = new FakeOpenAIService
-        {
-            Result = new AIResult
-            {
-                IsSuccess = true,
-                Content = "AI image answer"
-            }
-        };
-        var viewModel = CreateViewModel(openAIService);
+        var aiManager = new FakeAIManager { Response = "AI image answer" };
+        var viewModel = CreateViewModel(aiManager);
         viewModel.PendingImagePath = "C:\\temp\\scan.jpg";
 
         await viewModel.SendMessageCommand.ExecuteAsync(null);
 
-        Assert.Equal(DentalAIConfig.DefaultImagePrompt, openAIService.LastPrompt);
-        Assert.Equal("C:\\temp\\scan.jpg", openAIService.LastImagePath);
+        Assert.Equal(DentalAIConfig.DefaultImagePrompt, aiManager.LastQuestion);
+        Assert.Equal("C:\\temp\\scan.jpg", aiManager.LastImagePath);
         Assert.Equal(string.Empty, viewModel.Messages[1].Text);
         Assert.Equal("AI image answer", viewModel.Messages[2].Text);
         Assert.False(viewModel.IsBusy);
@@ -104,11 +88,11 @@ public sealed class MainPageViewModelTests
     [Fact]
     public async Task SendMessageAsync_ServiceThrows_AppendsErrorMessageAndResetsBusyState()
     {
-        var openAIService = new FakeOpenAIService
+        var aiManager = new FakeAIManager
         {
             ExceptionToThrow = new InvalidOperationException("send failed")
         };
-        var viewModel = CreateViewModel(openAIService);
+        var viewModel = CreateViewModel(aiManager);
         viewModel.UserInput = "Question";
 
         await viewModel.SendMessageCommand.ExecuteAsync(null);
@@ -123,7 +107,7 @@ public sealed class MainPageViewModelTests
     [Fact]
     public void ClearPendingImageCommand_ClearsPendingImage()
     {
-        var viewModel = CreateViewModel(new FakeOpenAIService());
+        var viewModel = CreateViewModel(new FakeAIManager());
         viewModel.PendingImagePath = "C:\\temp\\scan.jpg";
 
         viewModel.ClearPendingImageCommand.Execute(null);
@@ -142,7 +126,7 @@ public sealed class MainPageViewModelTests
         {
             ResultPath = "C:\\cache\\picked.jpg"
         };
-        var viewModel = CreateViewModel(new FakeOpenAIService(), mediaPickerService, mediaFileCache);
+        var viewModel = CreateViewModel(new FakeAIManager(), mediaPickerService, mediaFileCache);
 
         await viewModel.PickPhotoCommand.ExecuteAsync(null);
 
@@ -164,7 +148,7 @@ public sealed class MainPageViewModelTests
         {
             ResultPath = "C:\\cache\\captured.png"
         };
-        var viewModel = CreateViewModel(new FakeOpenAIService(), mediaPickerService, mediaFileCache);
+        var viewModel = CreateViewModel(new FakeAIManager(), mediaPickerService, mediaFileCache);
 
         await viewModel.TakePhotoCommand.ExecuteAsync(null);
 
@@ -176,12 +160,9 @@ public sealed class MainPageViewModelTests
     [Fact]
     public async Task TakePhotoAsync_CaptureNotSupported_DoesNothing()
     {
-        var mediaPickerService = new FakeMediaPickerService
-        {
-            IsCaptureSupported = false
-        };
+        var mediaPickerService = new FakeMediaPickerService { IsCaptureSupported = false };
         var mediaFileCache = new FakeMediaFileCache();
-        var viewModel = CreateViewModel(new FakeOpenAIService(), mediaPickerService, mediaFileCache);
+        var viewModel = CreateViewModel(new FakeAIManager(), mediaPickerService, mediaFileCache);
         viewModel.PendingImagePath = "C:\\existing\\image.jpg";
 
         await viewModel.TakePhotoCommand.ExecuteAsync(null);
@@ -196,7 +177,7 @@ public sealed class MainPageViewModelTests
     {
         var mediaPickerService = new FakeMediaPickerService();
         var mediaFileCache = new FakeMediaFileCache();
-        var viewModel = CreateViewModel(new FakeOpenAIService(), mediaPickerService, mediaFileCache);
+        var viewModel = CreateViewModel(new FakeAIManager(), mediaPickerService, mediaFileCache);
         viewModel.PendingImagePath = "C:\\existing\\image.jpg";
 
         await viewModel.PickPhotoCommand.ExecuteAsync(null);
@@ -214,7 +195,7 @@ public sealed class MainPageViewModelTests
             PickPhotoException = new InvalidOperationException("pick failed")
         };
         var mediaFileCache = new FakeMediaFileCache();
-        var viewModel = CreateViewModel(new FakeOpenAIService(), mediaPickerService, mediaFileCache);
+        var viewModel = CreateViewModel(new FakeAIManager(), mediaPickerService, mediaFileCache);
         viewModel.PendingImagePath = "C:\\existing\\image.jpg";
 
         await viewModel.PickPhotoCommand.ExecuteAsync(null);
@@ -233,7 +214,7 @@ public sealed class MainPageViewModelTests
             CapturePhotoException = new InvalidOperationException("capture failed")
         };
         var mediaFileCache = new FakeMediaFileCache();
-        var viewModel = CreateViewModel(new FakeOpenAIService(), mediaPickerService, mediaFileCache);
+        var viewModel = CreateViewModel(new FakeAIManager(), mediaPickerService, mediaFileCache);
         viewModel.PendingImagePath = "C:\\existing\\image.jpg";
 
         await viewModel.TakePhotoCommand.ExecuteAsync(null);
@@ -244,77 +225,63 @@ public sealed class MainPageViewModelTests
     }
 
     private static MainPageViewModel CreateViewModel(
-        FakeOpenAIService openAIService,
+        FakeAIManager aiManager,
         FakeMediaPickerService? mediaPickerService = null,
         FakeMediaFileCache? mediaFileCache = null)
     {
         return new MainPageViewModel(
-            new AIManager(openAIService),
+            aiManager,
             mediaPickerService ?? new FakeMediaPickerService(),
             mediaFileCache ?? new FakeMediaFileCache());
     }
 
-    private sealed class FakeOpenAIService : IOpenAIService
+    private sealed class FakeAIManager : IAIManager
     {
-        public AIResult Result { get; set; } = new();
-
+        public string Response { get; set; } = string.Empty;
         public Exception? ExceptionToThrow { get; set; }
-
-        public string? LastPrompt { get; private set; }
-
+        public string? LastQuestion { get; private set; }
         public string? LastImagePath { get; private set; }
 
-        public Task<AIResult> SendAsync(string prompt, string? imagePath = null, string? systemPrompt = null)
+        public Task<string> AskDentistAI(string question, string? imagePath = null)
         {
-            LastPrompt = prompt;
+            LastQuestion = question;
             LastImagePath = imagePath;
 
             if (ExceptionToThrow is not null)
-            {
                 throw ExceptionToThrow;
-            }
 
-            return Task.FromResult(Result);
+            return Task.FromResult(Response);
         }
+
+        public Task<string> GenerateLecture(string topic, int courseYear) => Task.FromResult(string.Empty);
+        public Task<string> GenerateTest(string topic, int courseYear, int questionCount = 10) => Task.FromResult(string.Empty);
+        public Task<string> GenerateTeacherCase(string topic, int courseYear) => Task.FromResult(string.Empty);
+        public Task<string> GenerateStudentCase(string topic, int courseYear) => Task.FromResult(string.Empty);
+        public Task<string> AskStudent(string question, int courseYear = 2) => Task.FromResult(string.Empty);
+        public Task<string> EvaluateStudentAnswer(string caseText, string diagnosis, string treatment) => Task.FromResult(string.Empty);
     }
 
     private sealed class FakeMediaPickerService : IMediaPickerService
     {
         public bool IsCaptureSupported { get; set; }
-
         public FileResult? PickPhotoResult { get; set; }
-
         public FileResult? CapturePhotoResult { get; set; }
-
         public Exception? PickPhotoException { get; set; }
-
         public Exception? CapturePhotoException { get; set; }
-
         public int PickPhotoCallCount { get; private set; }
-
         public int CapturePhotoCallCount { get; private set; }
 
         public Task<FileResult?> PickPhotoAsync()
         {
             PickPhotoCallCount++;
-
-            if (PickPhotoException is not null)
-            {
-                throw PickPhotoException;
-            }
-
+            if (PickPhotoException is not null) throw PickPhotoException;
             return Task.FromResult(PickPhotoResult);
         }
 
         public Task<FileResult?> CapturePhotoAsync()
         {
             CapturePhotoCallCount++;
-
-            if (CapturePhotoException is not null)
-            {
-                throw CapturePhotoException;
-            }
-
+            if (CapturePhotoException is not null) throw CapturePhotoException;
             return Task.FromResult(CapturePhotoResult);
         }
     }
@@ -322,9 +289,7 @@ public sealed class MainPageViewModelTests
     private sealed class FakeMediaFileCache : IMediaFileCache
     {
         public string? ResultPath { get; set; }
-
         public FileResult? LastFile { get; private set; }
-
         public int CopyCallCount { get; private set; }
 
         public Task<string?> CopyToLocalCacheAsync(FileResult file)

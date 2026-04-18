@@ -2,25 +2,25 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DentistAssistantAI.App.Models;
 using DentistAssistantAI.App.Services;
-using DentistAssistantAI.Application.Services;
 using DentistAssistantAI.Core.Configuration;
+using DentistAssistantAI.Core.Interfaces;
 using System.Collections.ObjectModel;
 
 namespace DentistAssistantAI.App.ViewModels
 {
     public partial class MainPageViewModel : ObservableObject
     {
-        private readonly AIManager _aiManager;
+        private readonly IAIManager _aiManager;
         private readonly IMediaPickerService _mediaPickerService;
         private readonly IMediaFileCache _mediaFileCache;
 
-        public MainPageViewModel(AIManager aiManager)
+        public MainPageViewModel(IAIManager aiManager)
             : this(aiManager, new MauiMediaPickerService(), new MediaFileCache())
         {
         }
 
         public MainPageViewModel(
-            AIManager aiManager,
+            IAIManager aiManager,
             IMediaPickerService mediaPickerService,
             IMediaFileCache mediaFileCache)
         {

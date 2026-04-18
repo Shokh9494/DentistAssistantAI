@@ -1,4 +1,4 @@
-using DentistAssistantAI.Application.Services;
+using DentistAssistantAI.Core.Interfaces;
 using DentistAssistantAI.WebApi.DTOs;
 
 namespace DentistAssistantAI.WebApi.Endpoints;
@@ -9,7 +9,7 @@ public static class TeacherEndpoints
     {
         var group = app.MapGroup("/api/teacher");
 
-        group.MapPost("/lecture", async (GenerateContentRequest req, AIManager ai) =>
+        group.MapPost("/lecture", async (GenerateContentRequest req, IAIManager ai) =>
         {
             if (string.IsNullOrWhiteSpace(req.Topic))
                 return Results.BadRequest(new { error = "Topic cannot be empty." });
@@ -18,7 +18,7 @@ public static class TeacherEndpoints
             return Results.Ok(new { response });
         });
 
-        group.MapPost("/test", async (GenerateContentRequest req, AIManager ai) =>
+        group.MapPost("/test", async (GenerateContentRequest req, IAIManager ai) =>
         {
             if (string.IsNullOrWhiteSpace(req.Topic))
                 return Results.BadRequest(new { error = "Topic cannot be empty." });
@@ -27,7 +27,7 @@ public static class TeacherEndpoints
             return Results.Ok(new { response });
         });
 
-        group.MapPost("/case", async (GenerateContentRequest req, AIManager ai) =>
+        group.MapPost("/case", async (GenerateContentRequest req, IAIManager ai) =>
         {
             if (string.IsNullOrWhiteSpace(req.Topic))
                 return Results.BadRequest(new { error = "Topic cannot be empty." });

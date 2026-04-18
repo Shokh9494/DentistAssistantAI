@@ -11,7 +11,7 @@ var apiKey = builder.Configuration["OpenAI:ApiKey"]
 builder.Services.AddHttpClient<IOpenAIService, OpenAIService>(httpClient =>
     new OpenAIService(httpClient, apiKey));
 
-builder.Services.AddSingleton<AIManager>();
+builder.Services.AddSingleton<IAIManager, AIManager>();
 
 builder.Services.AddCors(options =>
 {

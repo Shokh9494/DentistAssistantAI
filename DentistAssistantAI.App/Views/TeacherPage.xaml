@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DentistAssistantAI.App.ViewModels"
+             x:Class="DentistAssistantAI.App.Views.TeacherPage"
+             x:DataType="vm:TeacherPageViewModel"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource AppBackground}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Background="{StaticResource CardBackground}"
+                Stroke="Transparent">
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="0,3" Radius="10" Opacity="0.25" />
+            </Border.Shadow>
+            <Grid Padding="16,14">
+                <HorizontalStackLayout Spacing="12">
+                    <Border Background="{StaticResource Primary}"
+                            StrokeShape="RoundRectangle 24"
+                            Stroke="Transparent"
+                            WidthRequest="48" HeightRequest="48">
+                        <Label Text="📚" HorizontalOptions="Center" VerticalOptions="Center" FontSize="24" />
+                    </Border>
+                    <Label Text="Teacher Tools"
+                           FontSize="17" FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Grid>
+        </Border>
+
+        <!-- Scrollable content -->
+        <ScrollView Grid.Row="1" Padding="16,12">
+            <VerticalStackLayout Spacing="12">
+
+                <!-- Inputs card -->
+                <Border Background="{StaticResource CardBackground}"
+                        StrokeShape="RoundRectangle 14"
+                        Stroke="Transparent"
+                        Padding="16">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,2" Radius="6" Opacity="0.2" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="12">
+
+                        <Label Text="Topic" TextColor="{StaticResource TextSecondary}" FontSize="13" />
+                        <Border StrokeShape="RoundRectangle 10"
+                                Stroke="{StaticResource Primary}"
+                                BackgroundColor="{StaticResource AppBackground}"
+                                Padding="12,0">
+                            <Entry Text="{Binding Topic}"
+                                   Placeholder="e.g. Glass Ionomer Cement"
+                                   PlaceholderColor="{StaticResource TextSecondary}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   BackgroundColor="Transparent"
+                                   FontSize="15" />
+                        </Border>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="Course Year" TextColor="{StaticResource TextSecondary}" FontSize="13" />
+                                <Border StrokeShape="RoundRectangle 10"
+                                        Stroke="{StaticResource Primary}"
+                                        BackgroundColor="{StaticResource AppBackground}"
+                                        Padding="4,0">
+                                    <Picker ItemsSource="{Binding Years}"
+                                            SelectedItem="{Binding CourseYear}"
+                                            TextColor="{StaticResource TextPrimary}"
+                                            TitleColor="{StaticResource TextSecondary}"
+                                            BackgroundColor="Transparent"
+                                            FontSize="15" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="Questions (Test)" TextColor="{StaticResource TextSecondary}" FontSize="13" />
+                                <Border StrokeShape="RoundRectangle 10"
+                                        Stroke="{StaticResource Primary}"
+                                        BackgroundColor="{StaticResource AppBackground}"
+                                        Padding="12,0">
+                                    <Entry Text="{Binding QuestionCount}"
+                                           Keyboard="Numeric"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           BackgroundColor="Transparent"
+                                           FontSize="15" />
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <!-- Action buttons -->
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                            <Button Grid.Column="0"
+                                    Text="📖 Lecture"
+                                    Command="{Binding GenerateLectureCommand}"
+                                    BackgroundColor="{StaticResource Primary}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    FontSize="13" FontAttributes="Bold"
+                                    CornerRadius="10" HeightRequest="46" BorderWidth="0" />
+                            <Button Grid.Column="1"
+                                    Text="✅ Test"
+                                    Command="{Binding GenerateTestCommand}"
+                                    BackgroundColor="{StaticResource Primary}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    FontSize="13" FontAttributes="Bold"
+                                    CornerRadius="10" HeightRequest="46" BorderWidth="0" />
+                            <Button Grid.Column="2"
+                                    Text="📋 Case"
+                                    Command="{Binding GenerateTeacherCaseCommand}"
+                                    BackgroundColor="{StaticResource Primary}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    FontSize="13" FontAttributes="Bold"
+                                    CornerRadius="10" HeightRequest="46" BorderWidth="0" />
+                        </Grid>
+
+                        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                           IsVisible="{Binding IsBusy}"
+                                           Color="{StaticResource Primary}"
+                                           HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Output card -->
+                <Border IsVisible="{Binding HasContent}"
+                        Background="{StaticResource CardBackground}"
+                        StrokeShape="RoundRectangle 14"
+                        Stroke="Transparent"
+                        Padding="16">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,2" Radius="6" Opacity="0.2" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="12">
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0"
+                                   Text="{Binding OutputTitle}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontAttributes="Bold" FontSize="15"
+                                   VerticalOptions="Center" />
+                            <Button Grid.Column="1"
+                                    Text="📋 Copy"
+                                    Command="{Binding CopyContentCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{StaticResource Primary}"
+                                    FontSize="13"
+                                    BorderWidth="0"
+                                    Padding="8,0" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="{StaticResource Primary}" Opacity="0.3" />
+
+                        <Label Text="{Binding GeneratedContent}"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="14"
+                               LineBreakMode="WordWrap" />
+
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+</ContentPage>

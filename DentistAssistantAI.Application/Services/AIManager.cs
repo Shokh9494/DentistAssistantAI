@@ -3,7 +3,7 @@ using DentistAssistantAI.Core.Interfaces;
 
 namespace DentistAssistantAI.Application.Services
 {
-    public class AIManager
+    public class AIManager : IAIManager
     {
         private readonly IOpenAIService _openAIService;
 
