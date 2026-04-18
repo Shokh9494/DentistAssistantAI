@@ -17,20 +17,20 @@ public partial class TeacherPageViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(GenerateLectureCommand))]
     [NotifyCanExecuteChangedFor(nameof(GenerateTestCommand))]
     [NotifyCanExecuteChangedFor(nameof(GenerateTeacherCaseCommand))]
-    private string _topic = string.Empty;
+    public partial string Topic { get; set; } = string.Empty;
 
-    [ObservableProperty] private int _courseYear = 3;
-    [ObservableProperty] private int _questionCount = 10;
+    [ObservableProperty] public partial int CourseYear { get; set; } = 3;
+    [ObservableProperty] public partial int QuestionCount { get; set; } = 10;
 
-    [ObservableProperty] private string _generatedContent = string.Empty;
-    [ObservableProperty] private string _outputTitle = string.Empty;
-    [ObservableProperty] private bool _hasContent;
+    [ObservableProperty] public partial string GeneratedContent { get; set; } = string.Empty;
+    [ObservableProperty] public partial string OutputTitle { get; set; } = string.Empty;
+    [ObservableProperty] public partial bool HasContent { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(GenerateLectureCommand))]
     [NotifyCanExecuteChangedFor(nameof(GenerateTestCommand))]
     [NotifyCanExecuteChangedFor(nameof(GenerateTeacherCaseCommand))]
-    private bool _isBusy;
+    public partial bool IsBusy { get; set; }
 
     public List<int> Years { get; } = [1, 2, 3, 4, 5];
 

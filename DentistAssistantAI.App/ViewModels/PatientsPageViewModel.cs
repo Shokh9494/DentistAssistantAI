@@ -11,7 +11,7 @@ namespace DentistAssistantAI.App.ViewModels
         private readonly IPatientService _patientService;
 
         [ObservableProperty]
-        private bool _isBusy;
+        public partial bool IsBusy { get; set; }
 
         public ObservableCollection<Patient> Patients { get; } = [];
 

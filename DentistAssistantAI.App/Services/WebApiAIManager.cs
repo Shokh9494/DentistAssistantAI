@@ -15,27 +15,18 @@ public class WebApiAIManager : IAIManager
 
     public async Task<string> AskDentistAI(string question, string? imagePath = null)
     {
-        try
+        using var form = new MultipartFormDataContent();
+        form.Add(new StringContent(question), "message");
+
+        if (imagePath != null)
         {
-            using var form = new MultipartFormDataContent();
-            form.Add(new StringContent(question), "message");
-
-            if (imagePath != null)
-            {
-                var bytes = await File.ReadAllBytesAsync(imagePath);
-                form.Add(new ByteArrayContent(bytes), "image", Path.GetFileName(imagePath));
-            }
-
-            var resp = await _httpClient.PostAsync("/api/chat", form);
-            resp.EnsureSuccessStatusCode();
-            return await ExtractResponse(resp);
-        }
-        catch (Exception ex)
-        {
-
-            throw;
+            var bytes = await File.ReadAllBytesAsync(imagePath);
+            form.Add(new ByteArrayContent(bytes), "image", Path.GetFileName(imagePath));
         }
 
+        var resp = await _httpClient.PostAsync("/api/chat", form);
+        resp.EnsureSuccessStatusCode();
+        return await ExtractResponse(resp);
     }
 
     public async Task<string> GenerateLecture(string topic, int courseYear)

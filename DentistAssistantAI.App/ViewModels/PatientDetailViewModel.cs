@@ -13,7 +13,7 @@ namespace DentistAssistantAI.App.ViewModels
         private readonly IVisitService _visitService;
 
         [ObservableProperty]
-        private bool _isBusy;
+        public partial bool IsBusy { get; set; }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(
@@ -23,16 +23,16 @@ namespace DentistAssistantAI.App.ViewModels
             nameof(PatientDob),
             nameof(HasPhone),
             nameof(HasDob))]
-        private Patient? _patient;
+        public partial Patient? Patient { get; set; }
 
         public ObservableCollection<VisitItem> Visits { get; } = [];
 
-        public string PatientInitials => _patient?.Initials ?? string.Empty;
-        public string PatientName     => _patient?.Name ?? string.Empty;
-        public string PatientPhone    => _patient?.Phone ?? string.Empty;
-        public string PatientDob      => _patient?.DateOfBirthText ?? string.Empty;
-        public bool   HasPhone        => !string.IsNullOrEmpty(_patient?.Phone);
-        public bool   HasDob          => _patient?.DateOfBirth.HasValue ?? false;
+        public string PatientInitials => Patient?.Initials ?? string.Empty;
+        public string PatientName     => Patient?.Name ?? string.Empty;
+        public string PatientPhone    => Patient?.Phone ?? string.Empty;
+        public string PatientDob      => Patient?.DateOfBirthText ?? string.Empty;
+        public bool   HasPhone        => !string.IsNullOrEmpty(Patient?.Phone);
+        public bool   HasDob          => Patient?.DateOfBirth.HasValue ?? false;
 
         public PatientDetailViewModel(IVisitService visitService)
         {
@@ -48,11 +48,11 @@ namespace DentistAssistantAI.App.ViewModels
         [RelayCommand]
         private async Task LoadVisitsAsync()
         {
-            if (_patient is null) return;
+            if (Patient is null) return;
             IsBusy = true;
             try
             {
-                var records = await _visitService.GetByPatientIdAsync(_patient.Id);
+                var records = await _visitService.GetByPatientIdAsync(Patient.Id);
                 Visits.Clear();
                 foreach (var r in records)
                     Visits.Add(new VisitItem(r));

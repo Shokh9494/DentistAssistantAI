@@ -46,17 +46,17 @@ namespace DentistAssistantAI.App.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
-        private string _userInput = string.Empty;
+        public partial string UserInput { get; set; } = string.Empty;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
-        private bool _isBusy;
+        public partial bool IsBusy { get; set; }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(HasPendingImage))]
         [NotifyPropertyChangedFor(nameof(PendingImageSource))]
         [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
-        private string? _pendingImagePath;
+        public partial string? PendingImagePath { get; set; }
 
         public bool HasPendingImage => !string.IsNullOrEmpty(PendingImagePath);
         public ImageSource? PendingImageSource =>

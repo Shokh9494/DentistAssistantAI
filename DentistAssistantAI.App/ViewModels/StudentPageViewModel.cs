@@ -16,37 +16,40 @@ public partial class StudentPageViewModel : ObservableObject
     // ── Ask a question ──
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AskStudentCommand))]
-    private string _question = string.Empty;
+    public partial string Question { get; set; } = string.Empty;
 
-    [ObservableProperty] private int _questionYear = 2;
-    [ObservableProperty] private string _answerText = string.Empty;
-    [ObservableProperty] private bool _hasAnswer;
+    [ObservableProperty] public partial int QuestionYear { get; set; } = 2;
+    [ObservableProperty] public partial string AnswerText { get; set; } = string.Empty;
+    [ObservableProperty] public partial bool HasAnswer { get; set; }
 
     // ── Clinical case ──
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(GenerateCaseCommand))]
-    private string _caseTopic = string.Empty;
+    public partial string CaseTopic { get; set; } = string.Empty;
 
-    [ObservableProperty] private int _caseYear = 3;
-    [ObservableProperty] private string _caseText = string.Empty;
-    [ObservableProperty] private bool _hasCase;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(EvaluateCaseCommand))]
-    private string _diagnosis = string.Empty;
+    [ObservableProperty] public partial int CaseYear { get; set; } = 3;
+    [ObservableProperty] public partial string CaseText { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(EvaluateCaseCommand))]
-    private string _treatment = string.Empty;
+    public partial bool HasCase { get; set; }
 
-    [ObservableProperty] private string _feedbackText = string.Empty;
-    [ObservableProperty] private bool _hasFeedback;
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(EvaluateCaseCommand))]
+    public partial string Diagnosis { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(EvaluateCaseCommand))]
+    public partial string Treatment { get; set; } = string.Empty;
+
+    [ObservableProperty] public partial string FeedbackText { get; set; } = string.Empty;
+    [ObservableProperty] public partial bool HasFeedback { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AskStudentCommand))]
     [NotifyCanExecuteChangedFor(nameof(GenerateCaseCommand))]
     [NotifyCanExecuteChangedFor(nameof(EvaluateCaseCommand))]
-    private bool _isBusy;
+    public partial bool IsBusy { get; set; }
 
     public List<int> Years { get; } = [1, 2, 3, 4, 5];
 
