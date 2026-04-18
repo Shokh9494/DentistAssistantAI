@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: dentist-assistant-api
+    runtime: docker
+    dockerfilePath: DentistAssistantAI.WebApi/Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: OpenAI__ApiKey
+        sync: false

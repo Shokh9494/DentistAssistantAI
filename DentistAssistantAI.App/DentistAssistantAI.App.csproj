@@ -36,6 +36,7 @@
 		<MauiFont Include="Resources\Fonts\*" />
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="appsettings.json" />
+		<EmbeddedResource Include="appsettings.Development.json" Condition="Exists('appsettings.Development.json')" />
 	</ItemGroup>
 
 	<ItemGroup>

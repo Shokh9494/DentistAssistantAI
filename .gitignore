@@ -362,5 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /DentistAssistantAI.App/Security/ApiKeys.cs
-/DentistAssistantAI.App/appsettings.json
+/DentistAssistantAI.App/appsettings.Development.json
 /DentistAssistantAI.WebApi/appsettings.json
