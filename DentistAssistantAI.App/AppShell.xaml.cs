@@ -8,6 +8,8 @@ namespace DentistAssistantAI.App
         {
             InitializeComponent();
 
+            Routing.RegisterRoute("patientdetail", typeof(PatientDetailPage));
+
             if (DeviceInfo.Idiom == DeviceIdiom.Desktop)
                 BuildDesktopNavigation();
             else

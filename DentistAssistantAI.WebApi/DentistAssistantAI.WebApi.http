@@ -1,0 +1,6 @@
+@DentistAssistantAI.WebApi_HostAddress = http://localhost:5186
+
+GET {{DentistAssistantAI.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

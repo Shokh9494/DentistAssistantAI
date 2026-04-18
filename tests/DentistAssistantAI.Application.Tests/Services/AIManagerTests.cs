@@ -125,7 +125,7 @@ public sealed class AIManagerTests
 
         public string? LastImagePath { get; private set; }
 
-        public Task<AIResult> SendAsync(string prompt, string? imagePath = null)
+        public Task<AIResult> SendAsync(string prompt, string? imagePath = null, string? systemPrompt = null)
         {
             LastPrompt = prompt;
             LastImagePath = imagePath;

@@ -39,16 +39,21 @@ namespace DentistAssistantAI.App
             // Patient service
             builder.Services.AddSingleton<IPatientService, PatientService>();
 
+            // Visit service
+            builder.Services.AddSingleton<IVisitService, VisitService>();
+
             // Application layer
             builder.Services.AddSingleton<AIManager>();
 
             // View models
             builder.Services.AddSingleton<MainPageViewModel>();
             builder.Services.AddSingleton<PatientsPageViewModel>();
+            builder.Services.AddTransient<PatientDetailViewModel>();
 
             // Pages
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton<PatientsPage>();
+            builder.Services.AddTransient<PatientDetailPage>();
 
             // Shell
             builder.Services.AddSingleton<AppShell>();

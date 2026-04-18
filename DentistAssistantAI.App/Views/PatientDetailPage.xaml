@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DentistAssistantAI.App.ViewModels"
+             xmlns:models="clr-namespace:DentistAssistantAI.App.Models"
+             x:Class="DentistAssistantAI.App.Views.PatientDetailPage"
+             x:DataType="vm:PatientDetailViewModel"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{StaticResource AppBackground}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ── Custom Header Bar ── -->
+        <Border Grid.Row="0"
+                Background="{StaticResource CardBackground}"
+                Stroke="Transparent">
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="0,3" Radius="10" Opacity="0.25" />
+            </Border.Shadow>
+            <Grid Padding="4,10,16,10"
+                  ColumnDefinitions="Auto,Auto,*">
+
+                <Button Grid.Column="0"
+                        Text="‹"
+                        FontSize="28"
+                        TextColor="{StaticResource TextPrimary}"
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        Padding="12,0"
+                        VerticalOptions="Center"
+                        Clicked="OnBackClicked" />
+
+                <Label Grid.Column="1"
+                       Text="Patients  ›"
+                       TextColor="{StaticResource TextSecondary}"
+                       FontSize="14"
+                       VerticalOptions="Center" />
+
+                <Label Grid.Column="2"
+                       Text="{Binding PatientName}"
+                       TextColor="{StaticResource TextPrimary}"
+                       FontAttributes="Bold"
+                       FontSize="16"
+                       VerticalOptions="Center"
+                       HorizontalOptions="End"
+                       LineBreakMode="TailTruncation" />
+
+            </Grid>
+        </Border>
+
+        <!-- ── Scrollable content ── -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,12" Spacing="12">
+
+                <!-- Patient info card -->
+                <Border Background="{StaticResource CardBackground}"
+                        StrokeShape="RoundRectangle 14"
+                        Stroke="Transparent"
+                        Padding="16">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,2" Radius="6" Opacity="0.2" />
+                    </Border.Shadow>
+                    <Grid ColumnDefinitions="68,*" ColumnSpacing="16">
+
+                        <!-- Avatar circle with initials -->
+                        <Border Grid.Column="0"
+                                Background="{StaticResource Primary}"
+                                StrokeShape="RoundRectangle 34"
+                                Stroke="Transparent"
+                                WidthRequest="68"
+                                HeightRequest="68"
+                                VerticalOptions="Start">
+                            <Label Text="{Binding PatientInitials}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontAttributes="Bold"
+                                   FontSize="22"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+
+                        <!-- Name, phone, date of birth -->
+                        <VerticalStackLayout Grid.Column="1"
+                                             Spacing="6"
+                                             VerticalOptions="Center">
+
+                            <Label Text="{Binding PatientName}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontAttributes="Bold"
+                                   FontSize="18" />
+
+                            <HorizontalStackLayout Spacing="8"
+                                                   IsVisible="{Binding HasPhone}">
+                                <Label Text="📞"
+                                       FontSize="13"
+                                       VerticalOptions="Center" />
+                                <Label Text="{Binding PatientPhone}"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       FontSize="14"
+                                       VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Spacing="8"
+                                                   IsVisible="{Binding HasDob}">
+                                <Label Text="🎂"
+                                       FontSize="13"
+                                       VerticalOptions="Center" />
+                                <Label Text="{Binding PatientDob}"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       FontSize="14"
+                                       VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- New Visit button -->
+                <Button Text="＋  New Visit"
+                        Command="{Binding NewVisitCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="{StaticResource TextPrimary}"
+                        FontAttributes="Bold"
+                        FontSize="15"
+                        CornerRadius="12"
+                        HeightRequest="50"
+                        HorizontalOptions="Fill"
+                        BorderWidth="0" />
+
+                <!-- Visit History heading -->
+                <Label Text="Visit History"
+                       TextColor="{StaticResource TextPrimary}"
+                       FontAttributes="Bold"
+                       FontSize="16"
+                       Margin="0,4,0,0" />
+
+                <!-- Loading indicator -->
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
+                                   Color="{StaticResource Primary}"
+                                   HorizontalOptions="Center" />
+
+                <!-- Visit cards -->
+                <CollectionView ItemsSource="{Binding Visits}"
+                                SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:VisitItem">
+                            <Border Background="{StaticResource CardBackground}"
+                                    StrokeShape="RoundRectangle 14"
+                                    Stroke="Transparent"
+                                    Padding="16,12"
+                                    Margin="0,0,0,8">
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Offset="0,2" Radius="6" Opacity="0.2" />
+                                </Border.Shadow>
+                                <VerticalStackLayout Spacing="8">
+
+                                    <!-- Visit date -->
+                                    <Label Text="{Binding DateLabel}"
+                                           TextColor="{StaticResource Primary}"
+                                           FontAttributes="Bold"
+                                           FontSize="14" />
+
+                                    <!-- Chief complaint -->
+                                    <Label Text="{Binding Complaint}"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           FontSize="14"
+                                           LineBreakMode="WordWrap" />
+
+                                    <!-- Diagnoses + treatments bullet list -->
+                                    <VerticalStackLayout Spacing="4"
+                                                         BindableLayout.ItemsSource="{Binding AllBulletItems}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="x:String">
+                                                <Grid ColumnDefinitions="14,*" ColumnSpacing="6">
+                                                    <Label Grid.Column="0"
+                                                           Text="•"
+                                                           TextColor="{StaticResource Primary}"
+                                                           FontSize="13"
+                                                           VerticalOptions="Start" />
+                                                    <Label Grid.Column="1"
+                                                           Text="{Binding .}"
+                                                           TextColor="{StaticResource TextSecondary}"
+                                                           FontSize="13"
+                                                           LineBreakMode="WordWrap" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+</ContentPage>

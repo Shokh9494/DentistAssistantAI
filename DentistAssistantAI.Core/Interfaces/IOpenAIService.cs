@@ -4,6 +4,6 @@ namespace DentistAssistantAI.Core.Interfaces
 {
     public interface IOpenAIService
     {
-        Task<AIResult> SendAsync(string prompt, string? imagePath = null);
+        Task<AIResult> SendAsync(string prompt, string? imagePath = null, string? systemPrompt = null);
     }
 }

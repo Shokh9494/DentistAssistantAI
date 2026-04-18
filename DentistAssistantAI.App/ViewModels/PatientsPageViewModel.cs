@@ -50,5 +50,14 @@ namespace DentistAssistantAI.App.ViewModels
             await _patientService.AddAsync(patient);
             Patients.Insert(0, patient);
         }
+
+        [RelayCommand]
+        private static async Task SelectPatientAsync(Patient patient)
+        {
+            await Shell.Current.GoToAsync("patientdetail", new Dictionary<string, object>
+            {
+                { "patient", patient }
+            });
+        }
     }
 }

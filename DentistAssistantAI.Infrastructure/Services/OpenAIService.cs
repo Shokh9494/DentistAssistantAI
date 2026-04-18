@@ -19,7 +19,7 @@ namespace DentistAssistantAI.Infrastructure.Services
                 new AuthenticationHeaderValue("Bearer", apiKey);
         }
 
-        public async Task<AIResult> SendAsync(string prompt, string? imagePath = null)
+        public async Task<AIResult> SendAsync(string prompt, string? imagePath = null, string? systemPrompt = null)
         {
             try
             {
@@ -33,11 +33,11 @@ namespace DentistAssistantAI.Infrastructure.Services
                     var mime = ext == "png" ? "image/png" : "image/jpeg";
                     var fullUserText = DentalAIConfig.ImageAnalysisInstruction + prompt;
 
-                    requestJson = BuildVisionRequest(fullUserText, $"data:{mime};base64,{base64}");
+                    requestJson = BuildVisionRequest(fullUserText, $"data:{mime};base64,{base64}", systemPrompt);
                 }
                 else
                 {
-                    requestJson = BuildTextRequest(prompt);
+                    requestJson = BuildTextRequest(prompt, systemPrompt);
                 }
 
                 return await ExecuteAsync(requestJson);
@@ -60,7 +60,7 @@ namespace DentistAssistantAI.Infrastructure.Services
         /// Builds the multimodal vision request JSON using JsonNode — guarantees correct
         /// structure for the image_url content block regardless of serializer behavior.
         /// </summary>
-        private static string BuildVisionRequest(string userText, string imageDataUrl)
+        private static string BuildVisionRequest(string userText, string imageDataUrl, string? systemPrompt = null)
         {
             var userContent = new JsonArray
             {
@@ -75,7 +75,7 @@ namespace DentistAssistantAI.Infrastructure.Services
                     ["image_url"] = new JsonObject
                     {
                         ["url"]    = imageDataUrl,
-                        ["detail"] = "high"   // high-res analysis — critical for dental X-rays
+                        ["detail"] = "high"
                     }
                 }
             };
@@ -85,7 +85,7 @@ namespace DentistAssistantAI.Infrastructure.Services
                 ["model"] = DentalAIConfig.VisionModel,
                 ["messages"] = new JsonArray
                 {
-                    new JsonObject { ["role"] = "system", ["content"] = DentalAIConfig.SystemPrompt },
+                    new JsonObject { ["role"] = "system", ["content"] = systemPrompt ?? DentalAIConfig.SystemPrompt },
                     new JsonObject { ["role"] = "user",   ["content"] = userContent }
                 },
                 ["max_tokens"] = 2000
@@ -94,17 +94,14 @@ namespace DentistAssistantAI.Infrastructure.Services
             return request.ToJsonString();
         }
 
-        /// <summary>
-        /// Builds the text-only request JSON.
-        /// </summary>
-        private static string BuildTextRequest(string prompt)
+        private static string BuildTextRequest(string prompt, string? systemPrompt = null)
         {
             var request = new JsonObject
             {
                 ["model"] = DentalAIConfig.TextModel,
                 ["messages"] = new JsonArray
                 {
-                    new JsonObject { ["role"] = "system", ["content"] = DentalAIConfig.SystemPrompt },
+                    new JsonObject { ["role"] = "system", ["content"] = systemPrompt ?? DentalAIConfig.SystemPrompt },
                     new JsonObject { ["role"] = "user",   ["content"] = prompt }
                 }
             };

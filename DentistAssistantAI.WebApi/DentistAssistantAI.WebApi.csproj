@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DentistAssistantAI.Core\DentistAssistantAI.Core.csproj" />
+    <ProjectReference Include="..\DentistAssistantAI.Application\DentistAssistantAI.Application.csproj" />
+    <ProjectReference Include="..\DentistAssistantAI.Infrastructure\DentistAssistantAI.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

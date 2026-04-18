@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DentEdu — AI для стоматологического образования</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🦷 DentEdu</h1>
+    <p class="subtitle">ИИ-ассистент для стоматологического образования</p>
+  </header>
+
+  <!-- Tab Navigation -->
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="chat">💬 Чат</button>
+    <button class="tab-btn" data-tab="generate">📚 Генерация</button>
+    <button class="tab-btn" data-tab="cases">🩺 Кейсы</button>
+  </nav>
+
+  <!-- ===== CHAT TAB ===== -->
+  <section id="tab-chat" class="tab-content active">
+    <div class="mode-toggle">
+      <label>Режим:</label>
+      <button class="mode-btn active" data-mode="teacher">👨‍🏫 Преподаватель</button>
+      <button class="mode-btn" data-mode="student">👨‍🎓 Студент</button>
+      <select id="chat-year" class="year-select">
+        <option value="1">1 курс</option>
+        <option value="2" selected>2 курс</option>
+        <option value="3">3 курс</option>
+        <option value="4">4 курс</option>
+        <option value="5">5 курс</option>
+      </select>
+    </div>
+
+    <div id="chat-messages" class="messages-area"></div>
+
+    <div class="input-row">
+      <textarea id="chat-input" placeholder="Задайте вопрос..." rows="2"></textarea>
+      <button id="chat-send" class="btn-primary">Отправить</button>
+    </div>
+  </section>
+
+  <!-- ===== GENERATE TAB ===== -->
+  <section id="tab-generate" class="tab-content">
+    <div class="gen-controls">
+      <input id="gen-topic" type="text" placeholder="Тема (например: Стеклоиономерные цементы)" />
+      <select id="gen-year" class="year-select">
+        <option value="1">1 курс</option>
+        <option value="2">2 курс</option>
+        <option value="3" selected>3 курс</option>
+        <option value="4">4 курс</option>
+        <option value="5">5 курс</option>
+      </select>
+      <input id="gen-count" type="number" value="10" min="5" max="30" placeholder="Вопросов (для теста)" />
+    </div>
+
+    <div class="gen-buttons">
+      <button class="btn-gen" data-action="lecture">📖 Создать лекцию</button>
+      <button class="btn-gen" data-action="test">✅ Создать тест</button>
+      <button class="btn-gen" data-action="case">📋 Клинический кейс</button>
+    </div>
+
+    <div id="gen-output" class="output-area hidden">
+      <div class="output-header">
+        <span id="gen-output-title">Результат</span>
+        <button id="gen-copy" class="btn-small">📋 Копировать</button>
+      </div>
+      <div id="gen-content" class="markdown-output"></div>
+    </div>
+  </section>
+
+  <!-- ===== CASES TAB ===== -->
+  <section id="tab-cases" class="tab-content">
+    <div class="gen-controls">
+      <input id="case-topic" type="text" placeholder="Тема кейса (например: Острый пульпит)" />
+      <select id="case-year" class="year-select">
+        <option value="1">1 курс</option>
+        <option value="2">2 курс</option>
+        <option value="3" selected>3 курс</option>
+        <option value="4">4 курс</option>
+        <option value="5">5 курс</option>
+      </select>
+      <button id="case-generate" class="btn-primary">🎲 Сгенерировать кейс</button>
+    </div>
+
+    <div id="case-display" class="case-display hidden">
+      <div id="case-text" class="markdown-output"></div>
+
+      <div class="case-answer-form">
+        <h3>Ваш ответ</h3>
+        <label>Диагноз:</label>
+        <textarea id="case-diagnosis" placeholder="Введите предполагаемый диагноз..." rows="2"></textarea>
+        <label>План лечения:</label>
+        <textarea id="case-treatment" placeholder="Опишите план лечения..." rows="3"></textarea>
+        <button id="case-submit" class="btn-primary">📤 Отправить ответ</button>
+      </div>
+
+      <div id="case-feedback" class="feedback-area hidden">
+        <h3>Обратная связь</h3>
+        <div id="case-feedback-content" class="markdown-output"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading overlay -->
+  <div id="loading" class="loading hidden">
+    <div class="spinner"></div>
+    <span>Обрабатываю запрос...</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
