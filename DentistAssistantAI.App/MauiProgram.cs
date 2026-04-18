@@ -33,6 +33,12 @@ namespace DentistAssistantAI.App
             if (stream != null)
                 builder.Configuration.AddJsonStream(stream);
 
+#if DEBUG
+            using var devStream = assembly.GetManifestResourceStream("DentistAssistantAI.App.appsettings.Development.json");
+            if (devStream != null)
+                builder.Configuration.AddJsonStream(devStream);
+#endif
+
             var webApiBaseUrl = builder.Configuration["WebApi:BaseUrl"]
                 ?? "http://localhost:5186";
 

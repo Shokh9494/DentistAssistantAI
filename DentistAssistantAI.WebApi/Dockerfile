@@ -19,7 +19,7 @@ RUN dotnet publish "DentistAssistantAI.WebApi.csproj" \
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 EXPOSE 8080
-ENV ASPNETCORE_HTTP_PORTS=8080
+ENV ASPNETCORE_HTTP_PORTS=${PORT:-8080}
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "DentistAssistantAI.WebApi.dll"]
