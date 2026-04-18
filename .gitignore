@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /DentistAssistantAI.App/Security/ApiKeys.cs
 /DentistAssistantAI.App/appsettings.json
+/DentistAssistantAI.WebApi/appsettings.json
